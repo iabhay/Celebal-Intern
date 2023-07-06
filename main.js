@@ -25,16 +25,16 @@ const schema = {
      "cgpa": "String",
      "email": {
         "type": "String",
-        "patternProperties": {
-            "email": "([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])"
-        }
+        // "patternProperties": {
+        //     "email": "([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])"
+        // }
 }
 }
-const model = mongoose.model("NewMod", schema);
+const monmodel = mongoose.model("NewMod", schema);
 app.post("/post", async(req, res)=>{
     console.log("Inside Post Function");
 
-    const data = new model({
+    const data = new monmodel({
         name: req.body.name,
         id: req.body.id,
         branch: req.body.branch,
@@ -50,25 +50,30 @@ app.post("/post", async(req, res)=>{
 
 app.put("/update/:id", async(req, res)=>{
     console.log("Inside UPDATE Function");
-    let id = req.params.id;
-    let name = req.body.name;
-    let branch= req.body.branch;
-    let year = req.body.year;
-    let cgpa = req.body.cgpa;
-    let email = req.body.email;
+    let Aid = req.params.id;
+    let upname = req.body.name;
+    let upbranch= req.body.branch;
+    let upyear = req.body.year;
+    let upcgpa = req.body.cgpa;
+    let upemail = req.body.email;
 
-    model.findByIdAndUpdate(id, {$set: {
-        name:name,
-        branch:branch,
-        year:year,
-        cgpa:cgpa,
-        email:email
-    }},{new:true},(err,data)=>{
-        if(data == null){
-            res.send("Nothing Found");
+    monmodel.findOneAndUpdate({id : Aid}, {$set: {
+        name:upname,
+        branch:upbranch,
+        year:upyear,
+        cgpa:upcgpa,
+        email:upemail
+     }},{new: true},(err,data)=>{
+        if(err){
+            res.send("ERROR");
         }
         else{
-            res.send(data);
+            if(data == null){
+                res.send("Nothing Found");
+            }
+            else{
+                res.send(data);
+            }
         }
     })
     const val = await data.save();
